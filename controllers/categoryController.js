@@ -7,4 +7,15 @@ const getCategories = async (req, res) => {
   res.send(JSON.stringify({storeCategories: categories}))
 };
 
-module.exports = {getCategories};
+
+const getStoreCategories = async (req, res) => {
+    db_connection
+      .collection("category")
+      .findOne({ storeCode: req.params.storecode })
+      .then((obj) => {
+        console.log(obj);
+        res.send(JSON.stringify({categoryStoreWise: obj }));
+      });
+  };
+
+module.exports = {getCategories, getStoreCategories};
