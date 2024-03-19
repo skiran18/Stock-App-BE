@@ -20,12 +20,6 @@ const getStoreCategories = async (req, res) => {
 const addCategory = async (req, res) => {
   // req.body.newCategory = <new category string>
   // req.body.storecode = <store code>
-  //   db_connection
-  //     .collection("category")
-  //     .findOne({ storeCode: req.body.storecode })
-  //     .then((obj) => {
-  //       let oldCategories = obj.categories;
-  //       console.log(oldCategories);
   const filter = { storeCode: req.body.storecode };
   const updateCategory = {
     $push: {
@@ -49,18 +43,27 @@ const addCategory = async (req, res) => {
           db_connection
             .collection("stock")
             .findOneAndUpdate(filter, updateStock)
-            .then((res2,err) => {
-                if (err) {
-                    res.status(500).send(JSON.stringify({ message: "Error while updating category in the stock collection" }));
-                    return
-                }
+            .then((res2, err) => {
+              if (err) {
+                res
+                  .status(500)
+                  .send(
+                    JSON.stringify({
+                      message:
+                        "Error while updating category in the stock collection",
+                    })
+                  );
+                return;
+              }
               console.log(res2);
-              res.status(200).send(JSON.stringify({ message: "Category added successfully" }));
+              res
+                .status(200)
+                .send(
+                  JSON.stringify({ message: "Category added successfully" })
+                );
             });
         });
     });
 };
-// );
-// };
 
 module.exports = { getCategories, getStoreCategories, addCategory };
