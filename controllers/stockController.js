@@ -17,4 +17,31 @@ const getStoreStock = async (req, res) => {
     });
 };
 
-module.exports = { getStock, getStoreStock };
+const addNewStock = async (req, res) => {
+  // req.body.category = <category string>
+  // req.body.storecode = <store code string>
+  // req.body.categoryItem = <item object having "name", "count", and last updated">
+  const category = req.body.category;
+  console.log(category);
+  const filter = { storeCode: req.body.storecode };
+  const updateStock = {
+    $push: {
+      [`stock.categories.${category}`]: {
+        ...req.body.categoryItem,
+        lastUpdated: new Date(),
+      },
+    },
+  };
+  db_connection
+    .collection("stock")
+    .updateOne(filter, updateStock)
+    .then((result) => {
+      console.log(result);
+      res.send(JSON.stringify(result));
+    });
+};
+
+
+
+
+module.exports = { getStock, getStoreStock, addNewStock };
