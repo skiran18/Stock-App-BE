@@ -47,9 +47,9 @@ const addExistingStock = async (req, res) => {
     //req.body.item = <category item>
     // req.body.storecode = <store code string>
     const category = req.body.category;
-    const item = req.body.item;
+    const item = req.body.name;
     const newCount = req.body.newCount
-    console.log(category);
+    console.log(category, newCount);
     const filter = {'storeCode':req.body.storecode,[`stock.categories.${category}`]: {
         $elemMatch: {
           name: `${item}`
@@ -59,9 +59,7 @@ const addExistingStock = async (req, res) => {
       console.log(filter)
     const updateStock = {
       $set: {
-        [`stock.categories.${category}.$.count`]: newCount
-      },
-      $set:{
+        [`stock.categories.${category}.$.count`]: newCount,
         [`stock.categories.${category}.$.lastUpdated`]: new Date() 
       }
     };
