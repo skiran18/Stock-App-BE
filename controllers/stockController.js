@@ -46,7 +46,6 @@ const addExistingStock = async (req, res) => {
     // req.body.category = <category string>
     //req.body.item = <category item>
     // req.body.storecode = <store code string>
-    // req.body.categoryItem = <item object having "name", "count", and last updated">
     const category = req.body.category;
     const item = req.body.item;
     const newCount = req.body.newCount
@@ -59,7 +58,7 @@ const addExistingStock = async (req, res) => {
 
       console.log(filter)
     const updateStock = {
-      $inc: {
+      $set: {
         [`stock.categories.${category}.$.count`]: newCount
       },
       $set:{
@@ -77,37 +76,4 @@ const addExistingStock = async (req, res) => {
 
 
 
-  const decrementStock = async (req, res) => {
-    // req.body.category = <category string>
-    //req.body.item = <category item>
-    // req.body.storecode = <store code string>
-    // req.body.categoryItem = <item object having "name", "count", and last updated">
-    const category = req.body.category;
-    const item = req.body.item;
-    const newCount = req.body.newCount
-    console.log(category);
-    const filter = {'storeCode':req.body.storecode,[`stock.categories.${category}`]: {
-        $elemMatch: {
-          name: `${item}`
-        }
-      }};
-
-      console.log(filter)
-    const updateStock = {
-      $inc: {
-        [`stock.categories.${category}.$.count`]: -newCount
-      },
-      $set:{
-        [`stock.categories.${category}.$.lastUpdated`]: new Date() 
-      }
-    };
-    db_connection
-      .collection("stock")
-      .updateOne(filter, updateStock)
-      .then((result) => {
-        console.log(result);
-        res.send(JSON.stringify(result));
-      });
-  };
-
-module.exports = { getStock, getStoreStock, addNewStock, addExistingStock, decrementStock };
+module.exports = { getStock, getStoreStock, addNewStock, addExistingStock };
