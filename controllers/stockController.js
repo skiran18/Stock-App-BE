@@ -44,7 +44,7 @@ const addNewStock = async (req, res) => {
 
 const addExistingStock = async (req, res) => {
     // req.body.category = <category string>
-    //req.body.item = <category item>
+    //req.body.name = <category item>
     // req.body.storecode = <store code string>
     const category = req.body.category;
     const item = req.body.name;
@@ -73,5 +73,23 @@ const addExistingStock = async (req, res) => {
   };
 
 
+  const removeStock = async(req,res)=>{
+    const category = req.body.category;
+    const item = req.body.name;
+    const filter = {'storeCode':req.body.storecode}
+    const updateCategory = {
+      $pull: { [`stock.categories.${category}`]: {  name: `${item}` } }
+    }; 
 
-module.exports = { getStock, getStoreStock, addNewStock, addExistingStock };
+      console.log(filter)
+    db_connection
+      .collection("stock")
+      .updateOne(filter,updateCategory)
+      .then((result) => {
+        console.log(result);
+        res.send(JSON.stringify(result));
+      });
+  }
+
+
+module.exports = { getStock, getStoreStock, addNewStock, addExistingStock, removeStock};
