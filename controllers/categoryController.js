@@ -45,14 +45,12 @@ const addCategory = async (req, res) => {
             .findOneAndUpdate(filter, updateStock)
             .then((res2, err) => {
               if (err) {
-                res
-                  .status(500)
-                  .send(
-                    JSON.stringify({
-                      message:
-                        "Error while updating category in the stock collection",
-                    })
-                  );
+                res.status(500).send(
+                  JSON.stringify({
+                    message:
+                      "Error while updating category in the stock collection",
+                  })
+                );
                 return;
               }
               console.log(res2);
@@ -66,4 +64,33 @@ const addCategory = async (req, res) => {
     });
 };
 
-module.exports = { getCategories, getStoreCategories, addCategory };
+const deleteCategory = async (req, res) => {
+  // req.body.Category = <category string>
+  // req.body.storecode = <store code>
+  const filter = { storeCode: req.body.storecode };
+  const category = req.body.category
+  const updateCategory = {
+    $pull: { categories: { $in: [ `${category}` ] }
+    // $pull: `categories.${category}`
+  }};
+  const updateStock = {
+    $unset:{
+      [`stock.categories.${category}`] : ''
+    }
+  }
+  db_connection
+    .collection("category")
+    .updateOne(filter, updateCategory)
+    .then(() => {
+      db_connection
+        .collection("stock")
+        .updateOne(filter, updateStock)
+        .then((result) => {
+        console.log(result);
+        res.send(JSON.stringify(result));
+        });
+      });
+};
+
+
+module.exports = { getCategories, getStoreCategories, addCategory, deleteCategory};
